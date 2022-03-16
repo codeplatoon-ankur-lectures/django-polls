@@ -2,7 +2,6 @@ from django.forms import ValidationError
 from django.shortcuts import redirect, render, reverse
 from .models import Question, Choice
 import re
-from extra_views import *
 
 def question_list(request):
     my_data = {}
