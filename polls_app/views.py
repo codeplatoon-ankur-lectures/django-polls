@@ -8,12 +8,17 @@ def question_list(request):
 
     if request.method == "POST":
 
-        do_delete = "delete_question" in request.POST 
+        delete_question = "delete_question" in request.POST # dictionary field names + field values
 
         try:
-            if do_delete:
+            if delete_question:
                 question_id_to_delete = request.POST["delete_question"]
-                Question.objects.get(id=question_id_to_delete).delete()
+                q = Question.objects.get(id=question_id_to_delete)
+                if q.can_delete:
+                    q.delete()
+                else:
+                    my_data["error"] = "YOU CAN NOT DELETE THIS QUESTION!!!!!!!!"
+                
             else:
                 q = Question()
                 q.question_text = request.POST["question"]
@@ -52,21 +57,32 @@ def question_edit(request, question_id):
 
     if request.method == "POST":
         try:
-            q = Question.objects.get(pk=question_id)
-            q.question_text = request.POST["question"]
-            q.full_clean() # raise a validateion error if something in our model record was invalid
-            q.save()
+            add_new_choice = "choice_new" in request.POST
 
-            for field in request.POST:
-                pattern = r"choice-(\d+)" # group #1 will be the id of the choice
-                match = re.search(pattern, field)
-                if match:
-                    c = Choice.objects.get(id=match.group(1))
-                    c.choice_text = request.POST[field]
-                    c.full_clean()
-                    c.save()
+            if add_new_choice:
+                c = Choice()
+                c.choice_text = request.POST["choice"]
+                c.votes = 0
+                c.question = Question.objects.get(id=question_id)
+                c.full_clean()
+                c.save()
 
-            return redirect(reverse("question-detail", args=(question_id, )))
+            else:
+                q = Question.objects.get(pk=question_id)
+                q.question_text = request.POST["question"]
+                q.full_clean() # raise a validateion error if something in our model record was invalid
+                q.save()
+
+                for field in request.POST:
+                    pattern = r"choice-(\d+)" # group #1 will be the id of the choice  ... choice-17
+                    match = re.search(pattern, field)
+                    if match:
+                        c = Choice.objects.get(id=match.group(1))
+                        c.choice_text = request.POST[field]
+                        c.full_clean()
+                        c.save()
+
+                return redirect(reverse("question-detail", args=(question_id, )))
 
         except ValidationError as ve:
             my_data["error"] = ve.message_dict

@@ -27,10 +27,21 @@ Question Edit Page
   <input type="submit" value="Update Question" />
 </form>
 
+
+
 {% if error %}
 <p id="error">ERROR: {{ error }}</p>
 {% endif %}
 
 <hr />
-{# <a href="{% url 'question-edit' question.id %}"><button>Edit Question</button></a> #}
+
+<form method="POST">
+  {% csrf_token %}
+  <label for="choice">New Choice: </label>
+  <input name="choice" placeholder="add new choice"/>
+  <br />
+  <input type="hidden" name="choice_new" value=""/>
+  <input type="submit" value="Add Choice">
+</form>
+
 {% endblock %}

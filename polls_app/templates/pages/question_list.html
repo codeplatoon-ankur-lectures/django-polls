@@ -15,8 +15,10 @@ Polls: Questions
     <form method="POST">
       {% csrf_token %}
       <a href="{% url 'question-detail' q.id %}">{{ q.question_text }}</a>
+      {% if q.can_delete %}
       <input type="hidden" name="delete_question" value="{{ q.id }}" />
       <button type="submit">del</button>
+      {% endif %}
     </form>
   </li>
   {% endfor %}
@@ -28,7 +30,7 @@ Polls: Questions
   {% csrf_token %} <!-- don't forget your csrf token!!! -->
   <label for="question">New Question:</label>
   <input name="question" placeholder="enter question" />
-  <input type="hidden" name="add" value="" />
+  <input type="hidden" name="add_question" value="" />
   <button type="submit">Add Question</button>
   <br />
   {% if error %}
