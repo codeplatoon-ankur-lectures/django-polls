@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Question Page
+{% endblock %}
+
+{% block header %}
+Question Page
+{% endblock %}
+
+{% block main-content %}
+<h2>{{ question.question_text }}</h2>
+
+<form method="POST">
+  {% csrf_token %}
+  {% for c in question.choices.all|dictsort:"id" %}
+  <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ c.id }}">
+  <label for="choice{{ forloop.counter }}">{{ c.choice_text }} <span id="votes">{{ c.votes }} vote{% if c.votes != 1 %}s{% endif %}</span></label><br />
+  {% endfor %}
+  <br />
+  <input type="submit" value="Vote" />
+</form>
+
+<hr />
+<a href="{% url 'question-edit' question.id %}"><button>Edit Question</button></a>
+{% endblock %}

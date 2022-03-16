@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Polls Home Page
+{% endblock %}
+
+{% block header %}
+Polls: Questions
+{% endblock %}
+
+{% block main-content %}
+<ol>
+  {% for q in all_questions %}
+  <li>
+    <form method="POST">
+      {% csrf_token %}
+      <a href="{% url 'question-detail' q.id %}">{{ q.question_text }}</a>
+      <input type="hidden" name="delete_question" value="{{ q.id }}" />
+      <button type="submit">del</button>
+    </form>
+  </li>
+  {% endfor %}
+</ol>
+
+<hr />
+
+<form method="POST">
+  {% csrf_token %} <!-- don't forget your csrf token!!! -->
+  <label for="question">New Question:</label>
+  <input name="question" placeholder="enter question" />
+  <input type="hidden" name="add" value="" />
+  <button type="submit">Add Question</button>
+  <br />
+  {% if error %}
+  <p id="error">{{ error }}</p>
+  {% endif %}
+</form>
+
+
+{% endblock %}

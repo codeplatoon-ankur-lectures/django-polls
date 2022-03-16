@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Question Edit Page
+{% endblock %}
+
+{% block header %}
+Question Edit Page
+{% endblock %}
+
+{% block main-content %}
+<form method="POST">
+  {% csrf_token %}
+  <label for="question">Question: </label>
+  <input type="text" name="question" value="{{ question.question_text }}">
+  <br />
+  <ul>
+    {% for c in question.choices.all %}
+    <label for="choice-{{ c.id }}">Choice: </label>
+    <input type="text" name="choice-{{ c.id }}" value="{{ c.choice_text }}">
+    <br />
+    {% endfor %}
+  </ul>
+  
+  <br />
+  <input type="hidden" value="question_edit" />
+  <input type="submit" value="Update Question" />
+</form>
+
+{% if error %}
+<p id="error">ERROR: {{ error }}</p>
+{% endif %}
+
+<hr />
+{# <a href="{% url 'question-edit' question.id %}"><button>Edit Question</button></a> #}
+{% endblock %}

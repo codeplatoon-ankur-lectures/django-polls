@@ -1,0 +1,1 @@
+def something_view(request):
